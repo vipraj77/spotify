@@ -19,20 +19,61 @@ sp = spotipy.Spotify(client_credentials_manager=client_credentials_manager)
 # Streamlit App
 st.title("Spotify Artist Top Tracks")
 
-# Unique keys for each input field
-artist = st.text_input("Enter Artist Name", "Tale Of Us", key="artist_input_unique")
+# List of 100 artists
+artist_list = [
+    "Tale Of Us", "ARTBAT", "Adriatique", "Solomun", "Maceo Plex", "Stephan Bodzin", 
+    "ANNA", "Charlotte de Witte", "Mind Against", "I Hate Models", "Amelie Lens", 
+    "Joseph Capriati", "Adam Beyer", "Sven Väth", "Ricardo Villalobos", "The Martinez Brothers", 
+    "Maceo Plex", "Peggy Gou", "DJ Koze", "Ben Klock", "Nina Kraviz", "Marco Carola", 
+    "Loco Dice", "Richie Hawtin", "Dixon", "Tensnake", "Hosh", "Maya Jane Coles", 
+    "Chris Liebing", "Boris Brejcha", "Joris Voorn", "Carl Cox", "Stephan Bodzin", 
+    "Laurent Garnier", "Maceo Plex", "Kevin de Vries", "Black Coffee", "Ben Klock", "Loco Dice", 
+    "Charlotte de Witte", "Amelie Lens", "Sven Väth", "DJ Tennis", "Kölsch", "Guy Gerber", 
+    "Tale of Us", "Adriatique", "Marco Faraone", "Dixon", "Ilario Alicante", "Boris Brejcha", 
+    "Solomun", "Art Department", "Richie Hawtin", "Maceo Plex", "Recondite", "Travis Scott", 
+    "Tiga", "Tale Of Us", "Amelie Lens", "Ben Klock", "Chris Liebing", "Victor Ruiz", 
+    "Loco Dice", "Charlotte de Witte", "I Hate Models", "Adam Beyer", "Maceo Plex", 
+    "Joseph Capriati", "Nina Kraviz", "Solomun", "Steve Lawler", "Hector Couto", 
+    "Anja Schneider", "Loco Dice", "Danny Daze", "Apollonia", "Tale Of Us", 
+    "Marco Carola", "Stephan Bodzin", "Boris Brejcha", "Joseph Capriati", "Guy J", 
+    "Amelie Lens", "David August", "Victor Ruiz", "Jamie Jones", "Solomun", 
+    "Tale of Us", "Maceo Plex", "Sasha", "Charlotte de Witte", "Ricardo Villalobos", 
+    "Ben Klock", "Chris Liebing", "Hannah Wants", "Dixon", "Adriatique", "Peggy Gou"
+]
+
+# Choose whether to allow single or multiple artist selection
+artist = st.selectbox(
+    "Select Artist",
+    artist_list,
+    key="artist_input_unique"  # Unique key for the widget
+)
+
+# Uncomment the following block for multiple artist selection
+# artists = st.multiselect(
+#     "Select Artists",
+#     artist_list,
+#     key="artists_input_unique"
+# )
 
 # When user clicks the "Search" button
 if st.button("Search"):
     with st.spinner('Fetching data...'):
         try:
-            # Fetch top tracks of the artist
-            results = sp.search(q=artist, limit=15, type='track')
-            tracks = results['tracks']['items']
+            # For single artist selection
+            if artist:
+                results = sp.search(q=artist, limit=15, type='track')
+                tracks = results['tracks']['items']
+
+            # Uncomment below for multiple artist selection
+            # if artists:
+            #     tracks = []
+            #     for artist in artists:
+            #         results = sp.search(q=artist, limit=15, type='track')
+            #         tracks.extend(results['tracks']['items'])
 
             # If no tracks are found
             if not tracks:
-                st.warning(f"No tracks found for artist: {artist}")
+                st.warning(f"No tracks found for artist(s): {artist if isinstance(artist, str) else ', '.join(artists)}") # type: ignore
             else:
                 # Data Processing
                 track_names = [track['name'] for track in tracks]
