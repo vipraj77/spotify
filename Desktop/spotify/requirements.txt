@@ -1,0 +1,4 @@
+spotipy
+streamlit
+matplotlib
+apache-airflow
